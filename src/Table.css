@@ -7,4 +7,14 @@
 
 .table tr:nth-of-type(odd) {
   background-color: #f3f2f8;
+  justify-content: space-between;
+}
+
+.table tr {
+  display: flex;
+  justify-content: space-between;
+}
+
+.table td {
+  padding: 0.5rem;
 }

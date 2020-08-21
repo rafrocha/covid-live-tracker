@@ -1,20 +1,38 @@
 import React from 'react';
-import { Card, CardContent, Typography } from '@material-ui/core';
+import CountUp from 'react-countup';
+import numeral from 'numeral';
 
-const InfoBox = ({ title, cases, total }) => {
-  return (
-    <Card className="infoBox">
+import {
+  Card,
+  CardContent,
+  Typography,
+  CircularProgress
+} from '@material-ui/core';
+
+const InfoBox = ({ title, cases, total }) => (
+  <Card className="infoBox">
+    {cases || cases === 0 ? (
       <CardContent>
         <Typography className="infoBox__title" color="textSecondary">
           {title}
         </Typography>
-        <h2 className="infoBox__cases">{cases}</h2>
+        <CountUp
+          className="infoBox__cases"
+          start={0}
+          end={cases}
+          duration={2}
+          separator=","
+        />
         <Typography className="infoBox__total" color="textSecondary">
-          {total} Total
+          {numeral(total).format('0,0')} Total
         </Typography>
       </CardContent>
-    </Card>
-  );
-};
+    ) : (
+      <CardContent>
+        <CircularProgress />
+      </CardContent>
+    )}
+  </Card>
+);
 
 export default InfoBox;

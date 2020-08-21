@@ -7,6 +7,8 @@ import {
   Select
 } from '@material-ui/core';
 import './App.css';
+import { sortData } from './utils';
+import LineGraph from './LineGraph';
 import InfoBox from './InfoBox';
 import Map from './Map';
 import Table from './Table';
@@ -33,7 +35,8 @@ function App() {
             name: country.country,
             value: country.countryInfo.iso2
           }));
-          setTableData(data);
+          const sortedData = sortData(data);
+          setTableData(sortedData);
           setCountries(countries);
         });
     };
@@ -101,10 +104,8 @@ function App() {
         <CardContent>
           <h3>Live Cases by Country</h3>
           <Table countries={tableData} />
-          <h3>Worldwide Cases by Country</h3>
         </CardContent>
-        {/* Table */}
-        {/* Graph */}
+        <LineGraph maintainAspectRatio={false} />
       </Card>
     </div>
   );
