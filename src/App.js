@@ -6,6 +6,9 @@ import {
   MenuItem,
   Select
 } from '@material-ui/core';
+import TextField from '@material-ui/core/TextField';
+import { makeStyles } from '@material-ui/core/styles';
+import { Autocomplete } from '@material-ui/lab';
 import './App.css';
 import { sortData } from './utils';
 import LineGraph from './LineGraph';
@@ -17,11 +20,24 @@ import 'leaflet/dist/leaflet.css';
 
 function App() {
   const [countries, setCountries] = useState([]);
-  const [country, setCountry] = useState('worldwide');
+  const [country, setCountry] = useState('Worldwide');
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
   const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
   const [mapZoom, setMapZoom] = useState(3);
+  const [mapCountries, setMapCountries] = useState([]);
+
+  const useStyles = makeStyles({
+    option: {
+      fontSize: 15,
+      '& > span': {
+        marginRight: 10,
+        fontSize: 20
+      }
+    }
+  });
+
+  const classes = useStyles();
 
   useEffect(() => {
     axios.get('https://disease.sh/v3/covid-19/all').then(({ data }) => {
@@ -36,26 +52,33 @@ function App() {
         .then(({ data }) => {
           const countries = data.map(country => ({
             name: country.country,
-            value: country.countryInfo.iso2
+            value: country.countryInfo.iso3,
+            flag: country.countryInfo.flag
           }));
+          countries.push({
+            name: 'Worldwide',
+            value: 'Worldwide',
+            flag:
+              'https://cdn2.iconfinder.com/data/icons/pittogrammi/142/39-512.png'
+          });
           const sortedData = sortData(data);
           setTableData(sortedData);
+          setMapCountries(data);
           setCountries(countries);
         });
     };
     getCountriesData();
   }, []);
 
-  const onCountryChange = async event => {
-    const countryCode = event.target.value;
-
+  const onCountryChange = async (e, country) => {
+    const countryCode = (country && country.value) || 'Worldwide';
     const url =
-      countryCode === 'worldwide'
+      countryCode === 'Worldwide'
         ? 'https://disease.sh/v3/covid-19/all'
         : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
 
     await axios.get(url).then(({ data }) => {
-      if (countryCode === 'worldwide') {
+      if (countryCode === 'Worldwide') {
         setMapCenter({ lat: 34.80746, lng: -40.4796 });
         setMapZoom(2);
       } else {
@@ -73,22 +96,37 @@ function App() {
         <div className="app__header">
           <h1>COVID 19 TRACKER</h1>
 
-          <FormControl className="app__dropdown">
-            <Select
-              variant="outlined"
-              onChange={onCountryChange}
-              value={country}
-            >
-              <MenuItem key="worldwide" value="worldwide">
-                Worldwide
-              </MenuItem>
-              {countries.map(country => (
-                <MenuItem key={country.name} value={country.value}>
-                  {country.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
+          <Autocomplete
+            id="country-select"
+            className="app__dropdown"
+            style={{ width: 300 }}
+            options={countries}
+            classes={{
+              option: classes.option
+            }}
+            autoHighlight
+            onChange={onCountryChange}
+            getOptionLabel={option => option.name}
+            renderOption={option => (
+              <>
+                <span>
+                  <img src={option.flag} alt="" width="20" height="20" />
+                </span>
+                {option.name}
+              </>
+            )}
+            renderInput={params => (
+              <TextField
+                {...params}
+                label="Choose a country"
+                variant="outlined"
+                inputProps={{
+                  ...params.inputProps
+                  // autoComplete: 'new-password' // disable autocomplete and autofill
+                }}
+              />
+            )}
+          />
         </div>
 
         <div className="app_stats">
@@ -108,7 +146,7 @@ function App() {
             total={countryInfo.deaths}
           />
         </div>
-        <Map center={mapCenter} zoom={mapZoom} />
+        <Map countries={mapCountries} center={mapCenter} zoom={mapZoom} />
       </div>
       <Card className="app__right">
         <CardContent>
