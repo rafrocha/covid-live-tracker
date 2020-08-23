@@ -13,12 +13,15 @@ import InfoBox from './InfoBox';
 import Map from './Map';
 import Table from './Table';
 import axios from 'axios';
+import 'leaflet/dist/leaflet.css';
 
 function App() {
   const [countries, setCountries] = useState([]);
   const [country, setCountry] = useState('worldwide');
   const [countryInfo, setCountryInfo] = useState({});
   const [tableData, setTableData] = useState([]);
+  const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
+  const [mapZoom, setMapZoom] = useState(3);
 
   useEffect(() => {
     axios.get('https://disease.sh/v3/covid-19/all').then(({ data }) => {
@@ -52,6 +55,13 @@ function App() {
         : `https://disease.sh/v3/covid-19/countries/${countryCode}`;
 
     await axios.get(url).then(({ data }) => {
+      if (countryCode === 'worldwide') {
+        setMapCenter({ lat: 34.80746, lng: -40.4796 });
+        setMapZoom(2);
+      } else {
+        setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
+        setMapZoom(4);
+      }
       setCountry(countryCode);
       setCountryInfo(data);
     });
@@ -98,7 +108,7 @@ function App() {
             total={countryInfo.deaths}
           />
         </div>
-        <Map />
+        <Map center={mapCenter} zoom={mapZoom} />
       </div>
       <Card className="app__right">
         <CardContent>
