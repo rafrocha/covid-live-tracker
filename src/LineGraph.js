@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import { Line } from 'react-chartjs-2';
 import { CardContent, CircularProgress } from '@material-ui/core';
-import { buildChartData } from './utils';
+import { buildChartData, casesTypeColors } from './utils';
 import './LineGraph.css';
 import numeral from 'numeral';
 
@@ -11,8 +11,7 @@ const options = {
     display: false
   },
   title: {
-    display: true,
-    text: 'Worldwide Cases by Country'
+    display: false
   },
   elements: {
     point: {
@@ -53,7 +52,7 @@ const options = {
   }
 };
 
-const LineGraph = ({ maintainAspectRatio }) => {
+const LineGraph = ({ casesType = 'cases', ...props }) => {
   const [data, setData] = useState({});
   const [loading, setLoading] = useState(true);
 
@@ -61,28 +60,28 @@ const LineGraph = ({ maintainAspectRatio }) => {
     axios
       .get('https://disease.sh/v3/covid-19/historical/all?lastdays=120')
       .then(({ data }) => {
-        const chartData = buildChartData(data);
+        const chartData = buildChartData(data, casesType);
         setData(chartData);
         setLoading(false);
       });
-  }, []);
+  }, [casesType]);
 
   return (
-    <div className="graph-container">
+    <div className={props.className}>
       {loading ? (
         <CardContent>
           <CircularProgress />
         </CardContent>
       ) : (
         <Line
-          options={{ ...options, maintainAspectRatio }}
+          options={{ ...options, maintainAspectRatio: false }}
           data={{
             datasets: [
               {
                 fill: true,
                 data,
-                backgroundColor: 'rgba(229, 111, 111, 0.7)',
-                borderColor: '#CC1034'
+                backgroundColor: casesTypeColors[casesType].half_op,
+                borderColor: casesTypeColors[casesType].hex
               }
             ]
           }}

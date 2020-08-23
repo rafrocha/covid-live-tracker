@@ -26,6 +26,7 @@ function App() {
   const [mapCenter, setMapCenter] = useState({ lat: 34.80746, lng: -40.4796 });
   const [mapZoom, setMapZoom] = useState(3);
   const [mapCountries, setMapCountries] = useState([]);
+  const [casesType, setCasesType] = useState('cases');
 
   const useStyles = makeStyles({
     option: {
@@ -128,34 +129,50 @@ function App() {
           />
         </div>
 
-        <div className="app_stats">
+        <div className="app__stats">
           <InfoBox
+            active={casesType === 'cases'}
             isRed
+            onClick={() => setCasesType('cases')}
             title="Coronavirus Cases"
             cases={countryInfo.todayCases}
             total={countryInfo.cases}
           />
           <InfoBox
+            active={casesType === 'recovered'}
             isGreen
+            onClick={() => setCasesType('recovered')}
             title="Recovered"
             cases={countryInfo.todayRecovered}
             total={countryInfo.recovered}
           />
           <InfoBox
+            active={casesType === 'deaths'}
             isOrange
+            onClick={() => setCasesType('deaths')}
             title="Deaths"
             cases={countryInfo.todayDeaths}
             total={countryInfo.deaths}
           />
         </div>
-        <Map countries={mapCountries} center={mapCenter} zoom={mapZoom} />
+        <Map
+          casesType={casesType}
+          countries={mapCountries}
+          center={mapCenter}
+          zoom={mapZoom}
+        />
       </div>
       <Card className="app__right">
         <CardContent>
           <h3>Live Cases by Country</h3>
           <Table countries={tableData} />
+          <h3>Worldwide new {casesType}</h3>
+          <LineGraph
+            casesType={casesType}
+            className="app__graph"
+            country={country}
+          />
         </CardContent>
-        <LineGraph className="app__graph" country={country} />
       </Card>
     </div>
   );

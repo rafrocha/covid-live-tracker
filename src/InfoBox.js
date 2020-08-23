@@ -10,8 +10,18 @@ import {
   CircularProgress
 } from '@material-ui/core';
 
-const InfoBox = ({ active, isRed, isOrange, isGreen, title, cases, total }) => (
+const InfoBox = ({
+  active,
+  isRed,
+  isOrange,
+  isGreen,
+  title,
+  cases,
+  total,
+  ...props
+}) => (
   <Card
+    onClick={props.onClick}
     className={`infoBox ${active && 'infoBox--selected'} ${isRed &&
       'infoBox--red'} ${isOrange && 'infoBox--orange'} ${isGreen &&
       'infoBox--green'}`}
