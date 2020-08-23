@@ -1,6 +1,7 @@
 import React from 'react';
 import CountUp from 'react-countup';
 import numeral from 'numeral';
+import './InfoBox.css';
 
 import {
   Card,
@@ -9,15 +10,20 @@ import {
   CircularProgress
 } from '@material-ui/core';
 
-const InfoBox = ({ title, cases, total }) => (
-  <Card className="infoBox">
+const InfoBox = ({ active, isRed, isOrange, isGreen, title, cases, total }) => (
+  <Card
+    className={`infoBox ${active && 'infoBox--selected'} ${isRed &&
+      'infoBox--red'} ${isOrange && 'infoBox--orange'} ${isGreen &&
+      'infoBox--green'}`}
+  >
     {cases || cases === 0 ? (
       <CardContent>
         <Typography className="infoBox__title" color="textSecondary">
           {title}
         </Typography>
         <CountUp
-          className="infoBox__cases"
+          className={`infoBox__cases ${isOrange &&
+            'infoBox__cases--orange'} ${isGreen && 'infoBox__cases--green'}`}
           start={0}
           end={cases}
           duration={2}

@@ -79,11 +79,10 @@ function App() {
 
     await axios.get(url).then(({ data }) => {
       if (countryCode === 'Worldwide') {
-        setMapCenter({ lat: 34.80746, lng: -40.4796 });
         setMapZoom(2);
       } else {
         setMapCenter([data.countryInfo.lat, data.countryInfo.long]);
-        setMapZoom(4);
+        setMapZoom(3);
       }
       setCountry(countryCode);
       setCountryInfo(data);
@@ -94,7 +93,7 @@ function App() {
     <div className="app">
       <div className="app__left">
         <div className="app__header">
-          <h1>COVID 19 TRACKER</h1>
+          <h1>COVID-19 TRACKER</h1>
 
           <Autocomplete
             id="country-select"
@@ -131,16 +130,19 @@ function App() {
 
         <div className="app_stats">
           <InfoBox
+            isRed
             title="Coronavirus Cases"
             cases={countryInfo.todayCases}
             total={countryInfo.cases}
           />
           <InfoBox
+            isGreen
             title="Recovered"
             cases={countryInfo.todayRecovered}
             total={countryInfo.recovered}
           />
           <InfoBox
+            isOrange
             title="Deaths"
             cases={countryInfo.todayDeaths}
             total={countryInfo.deaths}
@@ -153,7 +155,7 @@ function App() {
           <h3>Live Cases by Country</h3>
           <Table countries={tableData} />
         </CardContent>
-        <LineGraph maintainAspectRatio={false} />
+        <LineGraph className="app__graph" country={country} />
       </Card>
     </div>
   );
