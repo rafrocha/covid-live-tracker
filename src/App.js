@@ -1,11 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import {
-  FormControl,
-  Card,
-  CardContent,
-  MenuItem,
-  Select
-} from '@material-ui/core';
+import { Card, CardContent } from '@material-ui/core';
 import TextField from '@material-ui/core/TextField';
 import { makeStyles } from '@material-ui/core/styles';
 import { Autocomplete } from '@material-ui/lab';
@@ -166,7 +160,7 @@ function App() {
         <CardContent>
           <h3>Live Cases by Country</h3>
           <Table countries={tableData} />
-          <h3>Worldwide new {casesType}</h3>
+          <h3 className="app__graphTitle">Worldwide new {casesType}</h3>
           <LineGraph
             casesType={casesType}
             className="app__graph"

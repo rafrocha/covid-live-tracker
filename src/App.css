@@ -26,6 +26,8 @@ body {
 
 .app__left {
   flex: 0.9;
+  display: flex;
+  flex-direction: column;
 }
 
 .app__right {
@@ -50,6 +52,10 @@ body {
 
 .app__graph {
   flex-grow: 1;
+}
+
+.app__graphTitle {
+  margin: 10px 0;
 }
 
 @media (max-width: 990px) {
